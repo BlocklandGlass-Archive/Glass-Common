@@ -11,12 +11,8 @@ trait Message {
 }
 
 trait MessageReader[T] {
-	def read(action: T => Unit): IO.Iteratee[Unit] = IO repeat {
-		for (message <- readMessage)
-		yield action(message)
-	}
-	def readMessage: IO.Iteratee[T] = for {
+	def read: IO.Iteratee[Option[T]] = for {
 		message <- IO takeUntil ByteString("\r\n", "UTF-8")
 	} yield parse(message.decodeString("UTF-8").split("\t"))
-	protected def parse(header: Seq[String]): T
+	protected def parse(header: Seq[String]): Option[T]
 }

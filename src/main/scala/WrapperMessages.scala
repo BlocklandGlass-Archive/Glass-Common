@@ -20,14 +20,16 @@ case class HandshakeResult(accepted: Boolean) extends S2WMessage {
 
 object W2SMessageReader extends MessageReader[W2SMessage] {
 	protected def parse(message: Seq[String]) = message match {
-		case Seq("handshake", "init", publicKey) => HandshakeInit(publicKey)
-		case Seq("handshake", "response", response) => HandshakeResponse(response)
+		case Seq("handshake", "init", publicKey) => Some(HandshakeInit(publicKey))
+		case Seq("handshake", "response", response) => Some(HandshakeResponse(response))
+		case _ => None
 	}
 }
 
 object S2WMessageReader extends MessageReader[S2WMessage] {
 	protected def parse(message: Seq[String]) = message match {
-		case Seq("handshake", "challenge", challenge) => HandshakeChallenge(challenge)
-		case Seq("handshake", "result", result) => HandshakeResult(result == 1)
+		case Seq("handshake", "challenge", challenge) => Some(HandshakeChallenge(challenge))
+		case Seq("handshake", "result", result) => Some(HandshakeResult(result == "1"))
+		case _ => None
 	}
 }
