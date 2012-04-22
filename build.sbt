@@ -1,4 +1,4 @@
-name := "glass-wrapper-common"
+name := "glass-common"
 
 organization := "blocklandglass"
 
