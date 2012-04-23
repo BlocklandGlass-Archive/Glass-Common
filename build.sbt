@@ -6,7 +6,9 @@ version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.9.1"
 
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += "Nullable Archiva" at "http://archiva.nullable.se/repository/internal/"
+
+resolvers += "Nullable Archiva Snapshots" at "http://archiva.nullable.se/repository/snapshots/"
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.1"
 
