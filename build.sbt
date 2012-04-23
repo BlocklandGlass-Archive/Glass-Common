@@ -6,9 +6,15 @@ version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.9.1"
 
-resolvers += "Nullable Archiva" at "http://archiva.nullable.se/repository/internal/"
+resolvers += "Nullable.se" at "http://nexus.nullable.se/nexus/content/groups/public/"
 
-resolvers += "Nullable Archiva Snapshots" at "http://archiva.nullable.se/repository/snapshots/"
+publishMavenStyle := true
+
+publishTo <<= (version) { version: String =>
+  val nexus = "http://nexus.nullable.se/nexus/content/repositories/"
+  if (version.trim.endsWith("-SNAPSHOT")) Some("snapshots" at nexus + "snapshots/") 
+  else                                   Some("releases"  at nexus + "releases/")
+}
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.1"
 
