@@ -27,6 +27,7 @@ public class Authenticator {
 		params.setParameter("NAME", name);
 		params.setParameter("IP", ip);
 		query.setParams(params);
+		
 		HttpResponse response = httpclient.execute(query);
 		HttpEntity resEntity = response.getEntity();
 		
