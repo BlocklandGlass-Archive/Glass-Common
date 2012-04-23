@@ -18,4 +18,6 @@ publishTo <<= (version) { version: String =>
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.1"
 
+libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.1.3"
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.7.2" % "test"

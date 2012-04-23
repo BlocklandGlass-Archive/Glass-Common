@@ -3,43 +3,52 @@ package blocklandglass;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.InputStream;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.BasicHttpParams;
 
 public class Authenticator {
+	private static HttpClient httpclient = new DefaultHttpClient();
+
 	public static boolean queryAuth() {
 		//Place holder so that I can compile stuff without errors
 		return false;
 	}
 	
-	public static boolean queryAuth(String name, String ip, String blid) {
-		String data = "NAME=" + name + "&IP=" + ip;
-		String query = "POST /quthQuery.php HTTP/1.1\n";
-		query = query + "Host: auth.blockland.us\n";
-		query = query + "Content-Type: application/x-www-form-urlencoded\n";
-		query = query + "Content-Length:" + data.length() + "\n";
-		query = query + "\n" + data + "\n";
+	public static boolean queryAuth(String name, String ip, String blid) throws IOException {
+		HttpPost query = new HttpPost("http://auth.blockland.us/authQuery.php");
+		HttpParams params = new BasicHttpParams();
+		params.setParameter("NAME", name);
+		params.setParameter("IP", ip);
+		query.setParams(params);
+		HttpResponse response = httpclient.execute(query);
+		HttpEntity resEntity = response.getEntity();
 		
-		try {
-			Socket sock = new Socket("auth.blockland.us", 80);
-			PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
-			BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-			
-			out.write(query);
-			String line;
-			while((line = in.readLine()) != null) {
-				if(line.startsWith("YES")) {
-					return true;
+		if (resEntity != null) {
+			InputStream is = resEntity.getContent();
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(is));
+
+				String line;
+				while((line = in.readLine()) != null) {
+					if(line.startsWith("YES")) {
+						return true;
+					}
+				}
+			} finally {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
-			return false;
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 }
