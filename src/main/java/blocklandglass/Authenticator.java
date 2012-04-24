@@ -21,35 +21,59 @@ public class Authenticator {
 		return false;
 	}
 	
-	public static boolean queryAuth(String name, String ip, String blid) throws IOException {
+	public static boolean queryAuth(String name, String ip, String blid) {
+		if((getBLID(name, ip)) != -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static int getBLID(String name, String ip) {
 		HttpPost query = new HttpPost("http://auth.blockland.us/authQuery.php");
 		HttpParams params = new BasicHttpParams();
 		params.setParameter("NAME", name);
 		params.setParameter("IP", ip);
 		query.setParams(params);
 		
-		HttpResponse response = httpclient.execute(query);
-		HttpEntity resEntity = response.getEntity();
-		
-		if (resEntity != null) {
-			InputStream is = resEntity.getContent();
-			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(is));
-
-				String line;
-				while((line = in.readLine()) != null) {
-					if(line.startsWith("YES")) {
-						return true;
-					}
-				}
-			} finally {
+		try {
+			HttpResponse response = httpclient.execute(query);
+			HttpEntity resEntity = response.getEntity();
+			
+			if (resEntity != null) {
+				InputStream is = null;
 				try {
-					is.close();
+					is = resEntity.getContent();
+					BufferedReader in = new BufferedReader(new InputStreamReader(is));
+	
+					String line;
+					while((line = in.readLine()) != null) {
+						if(line.startsWith("YES")) {
+							try {
+								return Integer.parseInt(line.substring(4));
+							} catch (NumberFormatException e) {
+								return -1;
+							}
+						}
+					}
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					try {
+						if(is != null) {
+							is.close();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+						return -1;
+					}
 				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return false;
+		return -1;
 	}
 }
