@@ -8,6 +8,7 @@ import blocklandglass._
 trait Message {
 	def serialize: Seq[String]
 	def serializeToString: String = serialize.mkString("\t")+"\r\n"
+	def serializeToByteString: ByteString = ByteString(serializeToString, "UTF-8")
 }
 
 trait MessageReader[T] {
