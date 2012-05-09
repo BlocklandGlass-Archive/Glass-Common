@@ -33,7 +33,7 @@ object W2SMessageReader extends MessageReader[W2SMessage] {
 
 object S2WMessageReader extends MessageReader[S2WMessage] {
 	protected def parse(message: Seq[String]) = message match {
-		case Seq("handshake", "challenge", challenge) => Some(HandshakeChallenge(Base64.decode(challenge)))
+		case Seq("handshake", "challenge", challenge) => Some(HandshakeChallenge(Base64.decodeBase64(challenge)))
 		case Seq("handshake", "result", result) => Some(HandshakeResult(result == "1"))
 		case _ => None
 	}
