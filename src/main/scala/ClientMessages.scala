@@ -17,8 +17,8 @@ case object HandshakeUnregisteredResult extends S2CMessage {
 	def serialize = Seq("handshake", "notregistered")
 }
 
-case class AddServerMessage(server: ManagedServerAddress) extends S2CMessage {
-	def serialize = Seq("server", "add", server.wrapper, server.id)
+case class AddServerMessage(server: ManagedServerAddress, friendlyName: String) extends S2CMessage {
+	def serialize = Seq("server", "add", server.wrapper, server.id, friendlyName)
 }
 case class RemoveServerMessage(server: ManagedServerAddress) extends S2CMessage {
 	def serialize = Seq("server", "remove", server.wrapper, server.id)
@@ -44,7 +44,7 @@ object S2CMessageReader extends MessageReader[S2CMessage] {
 		case Seq("handshake", "result", result) => Some(HandshakeResult(result == "1"))
 		case Seq("handshake", "notregistered") => Some(HandshakeUnregisteredResult)
 		case Seq("log", wrapper, serverId, message) => Some(ServerLogMessage(ManagedServerAddress(wrapper, serverId), message))
-		case Seq("server", "add", wrapper, serverId) => Some(AddServerMessage(ManagedServerAddress(wrapper, serverId)))
+		case Seq("server", "add", wrapper, serverId, friendlyName) => Some(AddServerMessage(ManagedServerAddress(wrapper, serverId), friendlyName))
 		case Seq("server", "remove", wrapper, serverId) => Some(RemoveServerMessage(ManagedServerAddress(wrapper, serverId)))
 		case _ => None
 	}
