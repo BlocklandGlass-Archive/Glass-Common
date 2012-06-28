@@ -16,7 +16,7 @@ publishTo <<= (version) { version: String =>
   else                                   Some("releases"  at nexus + "releases/")
 }
 
-libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.1"
+libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.2"
 
 libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.codec" % "1.6"
 
